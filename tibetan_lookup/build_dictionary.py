@@ -130,3 +130,7 @@ class BuildDictionary:
             return None
         else:
             return out
+
+    def partial_match(self, query, dictionary):
+
+        return
