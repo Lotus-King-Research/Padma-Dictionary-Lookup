@@ -13,7 +13,7 @@ import re
 #  http://www.thlib.org/reference/transliteration/#essay=/thl/ewts/
 
 
-class Wylie(object):
+class WylieToBodig(object):
     #  various options for Wylie conversion
     check = bool()
     check_strict = bool()
