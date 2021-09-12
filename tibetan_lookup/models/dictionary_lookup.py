@@ -7,16 +7,16 @@ def dictionary_lookup(request):
     from tibetan_lookup import tibetan
     from tibetan_lookup.check_wylie import check_wylie
 
+    # Handle the input query
     search_query = [request.args.get('query')]
     sources = [request.args.get('sources')]
 
     texts = []
 
+    # Check if input string is wylie or Tibetan
     search_query = check_wylie(str(search_query)).replace(' ', '')
 
-    print(search_query)
-    print(sources)
-
+    # In case no sources selected, use Lobsang Monlam
     if len(sources) == 0:
         sources = ['lobsang_monlam']
 
