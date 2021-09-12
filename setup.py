@@ -12,7 +12,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://padma.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/Lotus-King-Research/Tibetan-Lookup'
-VERSION = '0.4.0'
+VERSION = '0.5.1'
 
 try:
     from setuptools import setup
@@ -20,11 +20,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
-install_requires = ['flask',
-                    'pandas',
-                    'botok',
-                    'gunicorn',
-                    'flask-cors']
+install_requires = ['pandas',
+                    'botok']
 
 
 if __name__ == "__main__":
@@ -41,7 +38,7 @@ if __name__ == "__main__":
           version=VERSION,
           download_url=DOWNLOAD_URL,
           install_requires=install_requires,
-          packages=['app'],
+          packages=['tibetan_lookup'],
 
           classifiers=['Intended Audience :: Science/Research',
                        'Programming Language :: Python :: 2.7',

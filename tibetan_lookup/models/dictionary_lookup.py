@@ -40,6 +40,3 @@ def dictionary_lookup(request):
             'tokens': tokens}
 
     return data
-
-    
-
