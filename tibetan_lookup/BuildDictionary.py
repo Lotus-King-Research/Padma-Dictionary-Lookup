@@ -110,6 +110,8 @@ class BuildDictionary:
 
     def _download_to_dataframe(self, url):
 
+        import warnings
+        
         '''Helper for downloading the source file to produce dictionary dataframe.'''
 
         import pandas as pd
@@ -119,6 +121,8 @@ class BuildDictionary:
         req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0')
         content = urlopen(req)
 
+        warnings.simplefilter('ignore')
+        
         return pd.read_csv(content, index_col=0, error_bad_lines=False)
 
     def _query(self, query, dictionary, partial_match=False):
