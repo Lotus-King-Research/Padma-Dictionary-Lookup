@@ -5,7 +5,7 @@ def dictionary_lookup(request):
     import tqdm
 
     from tibetan_lookup import tibetan
-    from tibetan_lookup.check_wylie import check_wylie
+    from .utils.check_wylie import check_wylie
 
     # Handle the input query
     search_query = [request.args.get('query')]

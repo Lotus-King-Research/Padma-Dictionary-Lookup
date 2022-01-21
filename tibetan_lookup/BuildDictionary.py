@@ -186,7 +186,7 @@ class BuildDictionary:
 
         NOTE: `string` must end in tsek.'''
         
-        from tibetan_lookup.utils.check_if_wylie import check_if_wylie
+        from .utils.check_if_wylie import check_if_wylie
 
         # transform inputs
         string = check_if_wylie(string).replace(' ', '')

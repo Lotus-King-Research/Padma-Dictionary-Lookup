@@ -12,7 +12,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://padma.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/Lotus-King-Research/Tibetan-Lookup'
-VERSION = '0.5.1'
+VERSION = '0.5.2'
 
 try:
     from setuptools import setup
@@ -38,7 +38,9 @@ if __name__ == "__main__":
           version=VERSION,
           download_url=DOWNLOAD_URL,
           install_requires=install_requires,
-          packages=['tibetan_lookup'],
+          packages=['tibetan_lookup',
+                    'tibetan_lookup.models',
+                    'tibetan_lookup.utils'],
 
           classifiers=['Intended Audience :: Science/Research',
                        'Programming Language :: Python :: 2.7',
