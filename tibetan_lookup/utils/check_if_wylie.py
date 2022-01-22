@@ -22,10 +22,10 @@ def _wylie_to_tibetan(wylie_string):
     '''Takes in string, and converts to Tibetan following Wylie rules.
     Adds Tsek between syllables and after the last syllable.'''
 
-    from tibetan_lookup.utils.wylie_to_bodig import WylieToBodig
+    import pyewts
 
-    warn = []
-    
-    return (WylieToBodig().fromWylie(wylie_string, warn)) + '་'
+    converter = pyewts.pyewts()
+
+    return converter.toUnicode(wylie_string, []) + '་'
 
 
