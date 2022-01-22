@@ -23,7 +23,7 @@
 
 ## Description
 
-Repository for Tibetan Lookup. Used for making queries to dictionaries.
+Multi dictionary API for Tibetan Unicode and Wylie searches with exact and partial match.
 
 ## Owner
 
@@ -31,7 +31,7 @@ Repository for Tibetan Lookup. Used for making queries to dictionaries.
 
 ## Integrations
 
-- [Multi-Dictionary](https://github.com/Lotus-King-Research/Multi-Dictionary)
+- [Multi-Dictionary](https://github.com/Lotus-King-Research/Padma-Dictionary-Data)
 - [Padma-Backend](https://github.com/Lotus-King-Research/Padma-Frontend/)
 
 ## Docs

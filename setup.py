@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2021 Mikko Kotila
 
-DESCRIPTION = "Multi dictionary Tibetan lookup."
+DESCRIPTION = "Multi dictionary API for Tibetan Unicode and Wylie searches with exact and partial match."
 LONG_DESCRIPTION = """\
 """
 
@@ -39,9 +39,9 @@ if __name__ == "__main__":
           version=VERSION,
           download_url=DOWNLOAD_URL,
           install_requires=install_requires,
-          packages=['tibetan_lookup',
-                    'tibetan_lookup.models',
-                    'tibetan_lookup.utils'],
+          packages=['dictionary_lookup',
+                    'dictionary_lookup.models',
+                    'dictionary_lookup.utils'],
 
           classifiers=['Intended Audience :: Science/Research',
                        'Programming Language :: Python :: 2.7',

@@ -1,4 +1,4 @@
-class BuildDictionary:
+class DictionaryLookup:
 
     '''Builds a dictionary with query engine.'''
 

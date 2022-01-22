@@ -1,1 +1,0 @@
-from tibetan_lookup.BuildDictionary import BuildDictionary

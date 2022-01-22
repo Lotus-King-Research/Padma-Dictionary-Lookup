@@ -4,7 +4,7 @@ def dictionary_lookup(request):
     from botok import Text
     import tqdm
 
-    from tibetan_lookup import tibetan
+    from dictionary_lookup import tibetan
     from .utils.check_wylie import check_wylie
 
     # Handle the input query
