@@ -40,7 +40,7 @@ class DictionaryLookup:
                 self.dictionaries[label] = pd.read_csv(self._base_url + filename,
                                                        sep='\t',
                                                        header=0,
-                                                       names=['Tibetan', 'Description'])
+                                                       names=['Tibetan', 'Description']).dropna()
 
     def _debug_true(self):
         
