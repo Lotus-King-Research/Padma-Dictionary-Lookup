@@ -2,101 +2,45 @@ class BuildDictionary:
 
     '''Builds a dictionary with query engine.'''
 
-    def __init__(self,
-                 mahavyutpatti=False,
-                 tony_duff=False,
-                 erik_pema_kunsang=False,
-                 ives_waldo=False,
-                 jeffrey_hopkins=False,
-                 lobsang_monlam=False,
-                 tibetan_multi=False,
-                 tibetan_medicine=False,
-                 verb_lexicon=False,
-                 debug_true=False):
+    def __init__(self, dictionaries=[], debug=False):
 
-        # build dictionaries based on configuration
+        '''
+        dictionaries | list | a list of dictionary names as strings
+
+        NOTE: add ability to ingest csv directly
+        '''
+
+        import pandas as pd
 
         self.dictionaries = {}
-        self._base_url = 'https://multi-dictionary-data.padma.io/'
 
-        if mahavyutpatti:
-            self.dictionaries['mahavyutpatti'] = self._mahavyutpatti()
+        if debug is True:
 
-        if tony_duff:
-            self.dictionaries['tony_duff'] = self._tony_duff()
-        
-        if erik_pema_kunsang:
-            self.dictionaries['erik_pema_kunsang'] = self._erik_pema_kunsang()
-
-        if ives_waldo:
-            self.dictionaries['ives_waldo'] = self._ives_waldo()
-
-        if jeffrey_hopkins:
-            self.dictionaries['jeffrey_hopkins'] = self._jeffrey_hopkins()
-
-        if lobsang_monlam:
-            self.dictionaries['lobsang_monlam'] = self._lobsang_monlam()
-
-        if tibetan_multi:
-            self.dictionaries['tibetan_multi'] = self._tibetan_multi()
-
-        if tibetan_medicine:
-            self.dictionaries['tibetan_medicine'] = self._tibetan_medicine()
-
-        if verb_lexicon:
-            self.dictionaries['tibetan_verbs'] = self._verb_lexicon()
-
-        if debug_true:
             self.dictionaries['debug_true'] = self._debug_true()
 
-    def _mahavyutpatti(self):
+        else:
 
-        url = 'Mahavyutpatti-Dictionary.csv'
-        return self._download_to_dataframe(self._base_url + url)
+            self._base_url = 'https://raw.githubusercontent.com/Lotus-King-Research/Padma-Dictionary-Data/v2/data/'
 
-    def _tony_duff(self):
+            self.available_dictionaries = pd.read_csv(self._base_url + 'dictionaries.csv')
 
-        url = 'TonyDuff-Dictionary.csv'
-        return self._download_to_dataframe(self._base_url + url)
+            # handle the case for custom selection of dictionaries
+            if len(dictionaries) > 0:
+                _temp = self.available_dictionaries[self.available_dictionaries['Label'].isin(dictionaries)]
+                self.available_dictionaries = _temp
 
-    def _erik_pema_kunsang(self):
+            for row in self.available_dictionaries.iterrows():
 
-        url = 'ErikPemaKunsang-Dictionary.csv'
-        return self._download_to_dataframe(self._base_url + url)
+                filename = row[1]['Name']
+                title = row[1]['Title']
+                label = row[1]['Label']
 
-    def _ives_waldo(self):
+                print("Downloading : %s" % title)
 
-        url = 'IvesWaldo-Dictionary.csv'
-        return self._download_to_dataframe(self._base_url + url)
-
-    def _jeffrey_hopkins(self):
-
-        url = 'JeffreyHopkins-Dictionary.csv'
-        return self._download_to_dataframe(self._base_url + url)
-
-    def _lobsang_monlam(self):
-
-        url = 'LobsangMonlam-Dictionary.csv'
-        return self._download_to_dataframe(self._base_url + url)
-
-    def _tibetan_multi(self):
-
-        url = 'TibetanMulti-Part1-Dictionary.csv'
-        temp = self._download_to_dataframe(self._base_url + url)
-        url = 'TibetanMulti-Part2-Dictionary.csv'
-        temp = temp.append(self._download_to_dataframe(self._base_url + url))
-        url = 'TibetanMulti-Part3-Dictionary.csv'
-        return temp.append(self._download_to_dataframe(self._base_url + url))
-
-    def _tibetan_medicine(self):
-
-        url = 'TibetanMedicine-Dictionary.csv'
-        return self._download_to_dataframe(self._base_url + url)
-
-    def _verb_lexicon(self):
-        
-        url = 'VerbLexicon-Dictionary.csv'
-        return self._download_to_dataframe(self._base_url + url)
+                self.dictionaries[label] = pd.read_csv(self._base_url + filename,
+                                                       sep='\t',
+                                                       header=0,
+                                                       names=['Tibetan', 'Description'])
 
     def _debug_true(self):
         
@@ -107,23 +51,6 @@ class BuildDictionary:
         df['Description'] = ['Mind of awakening', 'awakening', 'mind']
 
         return df
-
-    def _download_to_dataframe(self, url):
-
-        import warnings
-        
-        '''Helper for downloading the source file to produce dictionary dataframe.'''
-
-        import pandas as pd
-        from urllib.request import Request, urlopen
-
-        req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0')
-        content = urlopen(req)
-
-        warnings.simplefilter('ignore')
-        
-        return pd.read_csv(content, index_col=0, error_bad_lines=False)
 
     def _query(self, query, dictionary, partial_match=False):
 
@@ -164,7 +91,7 @@ class BuildDictionary:
 
         return out
 
-    def lookup(self, string, sources=['lobsang_monlam'], partial_match=False):
+    def lookup(self, string, sources=[], partial_match=False):
 
         '''Lookup Tibetan words from one or more dictionaries.
         
@@ -192,8 +119,8 @@ class BuildDictionary:
         string = check_if_wylie(string).replace(' ', '')
 
         # init
-        if isinstance(sources, str):
-           sources = [sources]
+        if len(sources) == 0:
+            sources = list(self.dictionaries.keys())
 
         out_dict = {}
         
