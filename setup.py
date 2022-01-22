@@ -6,7 +6,7 @@ DESCRIPTION = "Multi dictionary API for Tibetan Unicode and Wylie searches with 
 LONG_DESCRIPTION = """\
 """
 
-DISTNAME = 'Tibetan Lookup'
+DISTNAME = 'Dictionary Lookup'
 MAINTAINER = 'Mikko Kotila'
 MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://padma.io'
