@@ -21,6 +21,8 @@ def check_if_wylie(string):
     else:
     
         string = re.sub(' +', ' ', string)
+        string = string.lstrip()
+        string = string.rstrip()
         string = string.replace(' ', '་')
 
         return _wylie_to_tibetan(string)
