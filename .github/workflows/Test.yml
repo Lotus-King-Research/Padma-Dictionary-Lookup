@@ -15,6 +15,8 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pandas
+        pip install botok
+        pip install pyewts
     - name: Build Data
       run: |
         python test.py
