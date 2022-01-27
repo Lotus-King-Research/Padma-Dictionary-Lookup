@@ -20,7 +20,7 @@ class DictionaryLookup:
 
         else:
 
-            self._base_url = 'https://raw.githubusercontent.com/Lotus-King-Research/Padma-Dictionary-Data/v2/data/'
+            self._base_url = 'https://raw.githubusercontent.com/Lotus-King-Research/Padma-Dictionary-Data/main/data/'
 
             self.available_dictionaries = pd.read_csv(self._base_url + 'dictionaries.csv')
 
@@ -115,8 +115,12 @@ class DictionaryLookup:
         
         from .utils.check_if_wylie import check_if_wylie
 
+        # remove trailing and leading whitespace
+        string = string.lstrip()
+        string = string.rstrip()
+
         # transform inputs
-        string = check_if_wylie(string).replace(' ', '')
+        string = check_if_wylie(string)
 
         # init
         if len(sources) == 0:
