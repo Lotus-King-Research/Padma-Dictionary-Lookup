@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2021 Mikko Kotila
 
-DESCRIPTION = "Multi dictionary API for Tibetan Unicode and Wylie searches with exact and partial match."
+DESCRIPTION = "Multi dictionary API for Tibetan Unicode and Wylie searches with exact, partial, and fuzzy match."
 LONG_DESCRIPTION = """\
 """
 
@@ -12,7 +12,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://padma.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/Lotus-King-Research/Tibetan-Lookup'
-VERSION = '0.6.0'
+VERSION = '0.6.1'
 
 try:
     from setuptools import setup
@@ -22,7 +22,8 @@ except ImportError:
 
 install_requires = ['pandas',
                     'botok',
-                    'pyewts']
+                    'pyewts',
+                    'strsimpy']
 
 
 if __name__ == "__main__":
@@ -44,9 +45,8 @@ if __name__ == "__main__":
                     'dictionary_lookup.utils'],
 
           classifiers=['Intended Audience :: Science/Research',
-                       'Programming Language :: Python :: 2.7',
-                       'Programming Language :: Python :: 3.5',
-                       'Programming Language :: Python :: 3.6',
+                       'Programming Language :: Python :: 3.7',
+                       'Programming Language :: Python :: 3.8',
                        'License :: OSI Approved :: MIT License',
                        'Topic :: Scientific/Engineering :: Human Machine Interfaces',
                        'Topic :: Scientific/Engineering :: Artificial Intelligence',

@@ -1,3 +1,4 @@
 pandas
 botok
 pyewts
+strsimpy

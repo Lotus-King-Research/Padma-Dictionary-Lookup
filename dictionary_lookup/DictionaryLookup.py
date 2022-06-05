@@ -52,7 +52,7 @@ class DictionaryLookup:
 
         return df
 
-    def _query(self, query, dictionary, partial_match=False):
+    def _query(self, query, dictionary, partial_match=False, fuzzy_match=False):
 
         '''Helper for querying dictionaries. If the dictionary have not been loaded yet,
         it will automatically be added into the dictionary object (self).
@@ -60,6 +60,7 @@ class DictionaryLookup:
         query | str | the query string
         dictionary | str | name of the dictionary to be used 
         partial_match | bool | if partial match should be used
+        fuzzy_match | bool | if fuzzy match should be used
         '''
 
         # see if dictionary is already loaded
@@ -74,10 +75,15 @@ class DictionaryLookup:
         out = {}
 
         # handle partial match queries
-        if partial_match:
+        if partial_match or fuzzy_match:
+
+            if partial_match:
+                temp_query = query
+            elif fuzzy_match:
+                temp_query = query.split('་')[0]
             
-            tibetan = dictionary[dictionary['Tibetan'].str.contains(query)]['Tibetan'].tolist()
-            description = dictionary[dictionary['Tibetan'].str.contains(query)]['Description'].tolist()
+            tibetan = dictionary[dictionary['Tibetan'].str.contains(temp_query)]['Tibetan'].tolist()
+            description = dictionary[dictionary['Tibetan'].str.contains(temp_query)]['Description'].tolist()
            
             for i, word in enumerate(tibetan):
                 out[word] = str(description[i])
@@ -85,18 +91,29 @@ class DictionaryLookup:
             if query in list(out.keys()) is False:
                 out[query] = None
 
+            if fuzzy_match:
+
+                from .utils.fuzzy_matching import fuzzy_matching
+
+                fuzzy_matches = fuzzy_matching('སེམས་པ་', out, n=20)
+                out = {k: out[k] for k in out if k in fuzzy_matches}
+
+            return out
+
         # handle exact match queries
         else:
             out[query] = dictionary[dictionary['Tibetan'] == query]['Description'].tolist()
 
         return out
 
-    def lookup(self, string, sources=[], partial_match=False):
+    def lookup(self, string, sources=[], partial_match=False, fuzzy_match=False):
 
         '''Lookup Tibetan words from one or more dictionaries.
         
         string | str | the Tibetan string to be looked up
         sources | list or None | a list with one or more dictionary names
+        partial_match | bool | if partial match should be used
+        fuzzy_match | bool | if fuzzy match should be used
 
         Available sources:
 
@@ -136,6 +153,9 @@ class DictionaryLookup:
             # check for partial match (e.g. 'sems' will also return 'semsnyis').
             if partial_match:
                 out_dict[source] = self._query(string, source, partial_match=True)
+
+            elif fuzzy_match:
+                out_dict[source] = self._query(string, source, fuzzy_match=True)
             
             # exact match
             else:
