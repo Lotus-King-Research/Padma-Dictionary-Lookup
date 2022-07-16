@@ -12,7 +12,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://padma.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/Lotus-King-Research/Tibetan-Lookup'
-VERSION = '0.6.1'
+VERSION = '0.7'
 
 try:
     from setuptools import setup
