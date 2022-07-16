@@ -2,7 +2,7 @@ class DictionaryLookup:
 
     '''Builds a dictionary with query engine.'''
 
-    def __init__(self, dictionaries=[], debug=False):
+    def __init__(self, dictionaries=[]):
 
         '''
         dictionaries | list | a list of dictionary names as strings
@@ -14,43 +14,49 @@ class DictionaryLookup:
 
         self.dictionaries = {}
 
-        if debug is True:
+        self._base_url = 'https://raw.githubusercontent.com/Lotus-King-Research/Padma-Dictionary-Data/main/data/'
 
-            self.dictionaries['debug_true'] = self._debug_true()
+        # load the dictionary reference file
+        self.available_dictionaries = pd.read_csv(self._base_url + 'dictionaries.csv')
 
-        else:
+        # assume that all dictionaries are selected
+        self.selected_dictionaries = self.available_dictionaries
 
-            self._base_url = 'https://raw.githubusercontent.com/Lotus-King-Research/Padma-Dictionary-Data/main/data/'
+        # handle the case for custom selection of dictionaries
+        if len(dictionaries) > 0:
+            self.selected_dictionaries = self.available_dictionaries[self.available_dictionaries['Label'].isin(dictionaries)]
 
-            self.available_dictionaries = pd.read_csv(self._base_url + 'dictionaries.csv')
+        # add the dictionaries
+        for row in self.selected_dictionaries.iterrows():
+            self.dictionaries[row[1]['Label']] = self._load_dictionary(row[1]['Label'])
 
-            # handle the case for custom selection of dictionaries
-            if len(dictionaries) > 0:
-                _temp = self.available_dictionaries[self.available_dictionaries['Label'].isin(dictionaries)]
-                self.available_dictionaries = _temp
+    def _load_dictionary(self, label):
 
-            for row in self.available_dictionaries.iterrows():
-
-                filename = row[1]['Name']
-                title = row[1]['Title']
-                label = row[1]['Label']
-
-                print("Downloading : %s" % title)
-
-                self.dictionaries[label] = pd.read_csv(self._base_url + filename,
-                                                       sep='\t',
-                                                       header=0,
-                                                       names=['Tibetan', 'Description']).dropna()
-
-    def _debug_true(self):
+        '''Load dictionaries to memory
         
+        label | str | name of the dictionary'''
+
         import pandas as pd
 
-        df = pd.DataFrame()
-        df['Tibetan'] = ['བྱང་ཆུབ་ཀྱི་སེམས་','བྱང་ཆུབ་', 'སེམས་']
-        df['Description'] = ['Mind of awakening', 'awakening', 'mind']
+        row = self.available_dictionaries[self.available_dictionaries['Label'] == label]
 
-        return df
+        filename = row['Name'].values[0]
+        title = row['Title'].values[0]
+
+        print("Downloading : %s" % title)
+
+        if filename.endswith('.zip'): 
+            compression = 'zip'
+        else:
+            compression = None
+
+        data = pd.read_csv(self._base_url + filename,
+                           sep='\t',
+                           compression=compression,
+                           header=0,
+                           names=['Tibetan', 'Description']).dropna()
+
+        return data
 
     def _query(self, query, dictionary, partial_match=False, fuzzy_match=False):
 
@@ -69,7 +75,7 @@ class DictionaryLookup:
         
         # if not, then load it and keep it
         except KeyError:
-            self.dictionaries[dictionary]  = getattr(self, "_" + dictionary)()
+            self.dictionaries[dictionary] = self._load_dictionary(dictionary)
             dictionary = self.dictionaries[dictionary]
 
         out = {}
