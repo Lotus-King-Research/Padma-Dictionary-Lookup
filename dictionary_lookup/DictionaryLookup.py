@@ -58,7 +58,12 @@ class DictionaryLookup:
 
         return data
 
-    def _query(self, query, dictionary, partial_match=False, fuzzy_match=False):
+    def _query(self,
+               query,
+               dictionary,
+               partial_match=False,
+               fuzzy_match=False,
+               description_match=False):
 
         '''Helper for querying dictionaries. If the dictionary have not been loaded yet,
         it will automatically be added into the dictionary object (self).
@@ -80,16 +85,25 @@ class DictionaryLookup:
 
         out = {}
 
-        # handle partial match queries
-        if partial_match or fuzzy_match:
+        # handle partial and fuzzy match queries
+        if partial_match or fuzzy_match or description_match:
 
             if partial_match:
                 temp_query = query
+            
             elif fuzzy_match:
                 temp_query = query.split('་')[0]
+
+            elif description_match:
+                temp_query = query
             
-            tibetan = dictionary[dictionary['Tibetan'].str.contains(temp_query)]['Tibetan'].tolist()
-            description = dictionary[dictionary['Tibetan'].str.contains(temp_query)]['Description'].tolist()
+            if partial_match or fuzzy_match:
+                tibetan = dictionary[dictionary['Tibetan'].str.contains(temp_query)]['Tibetan'].tolist()
+                description = dictionary[dictionary['Tibetan'].str.contains(temp_query)]['Description'].tolist()
+
+            elif description_match:
+                tibetan = dictionary[dictionary['Description'].str.contains(query)]['Tibetan'].tolist()
+                description = dictionary[dictionary['Description'].str.contains(query)]['Description'].tolist()
            
             for i, word in enumerate(tibetan):
                 out[word] = str(description[i])
@@ -101,7 +115,7 @@ class DictionaryLookup:
 
                 from .utils.fuzzy_matching import fuzzy_matching
 
-                fuzzy_matches = fuzzy_matching('སེམས་པ་', out, n=20)
+                fuzzy_matches = fuzzy_matching(query, out, n=20)
                 out = {k: out[k] for k in out if k in fuzzy_matches}
 
             return out
@@ -112,7 +126,12 @@ class DictionaryLookup:
 
         return out
 
-    def lookup(self, string, sources=[], partial_match=False, fuzzy_match=False):
+    def lookup(self,
+               string,
+               sources=[],
+               partial_match=False,
+               fuzzy_match=False,
+               description_match=False):
 
         '''Lookup Tibetan words from one or more dictionaries.
         
@@ -121,20 +140,7 @@ class DictionaryLookup:
         partial_match | bool | if partial match should be used
         fuzzy_match | bool | if fuzzy match should be used
 
-        Available sources:
-
-        'mahavyutpatti'
-        'tony_duff'
-        'erik_pema_kunsang'
-        'ives_waldo'
-        'jeffrey_hopkins'
-        'lobsang_monlam'
-        'tibetan_multi'
-        'tibetan_medicine'
-        'verb_lexicon'
-        'debug_true' (for debugging only)
-
-        NOTE: `string` must end in tsek.'''
+        '''
         
         from .utils.check_if_wylie import check_if_wylie
 
@@ -142,8 +148,9 @@ class DictionaryLookup:
         string = string.lstrip()
         string = string.rstrip()
 
-        # transform inputs
-        string = check_if_wylie(string)
+        if description_match is False:
+            # transform inputs
+            string = check_if_wylie(string)
 
         # init
         if len(sources) == 0:
@@ -160,8 +167,12 @@ class DictionaryLookup:
             if partial_match:
                 out_dict[source] = self._query(string, source, partial_match=True)
 
+            # check for fuzzy match (searches based on fuzzy string similarity)
             elif fuzzy_match:
                 out_dict[source] = self._query(string, source, fuzzy_match=True)
+
+            elif description_match:
+                out_dict[source] = self._query(string, source, description_match=True)
             
             # exact match
             else:
