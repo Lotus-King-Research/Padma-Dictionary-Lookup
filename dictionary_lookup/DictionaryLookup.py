@@ -111,6 +111,9 @@ class DictionaryLookup:
             if query in list(out.keys()) is False:
                 out[query] = None
 
+            if partial_match:
+                out = {key: out[key] for key in sorted(out, key=lambda x: len(x))}
+
             if fuzzy_match:
 
                 from .utils.fuzzy_matching import fuzzy_matching
